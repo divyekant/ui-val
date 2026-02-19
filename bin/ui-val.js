@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 
-import { capture } from '../src/index.js';
+import { capture, cleanupScreenshots } from '../src/index.js';
 
 const args = process.argv.slice(2);
 
 function printUsage() {
-  console.error(`Usage: ui-val check <url> [options]
+  console.error(`Usage: ui-val <command> [options]
 
-Captures screenshots at multiple viewports for visual validation.
-The agent reads the screenshots directly — no API key needed.
+Commands:
+  check <url>    Capture screenshots for visual validation
+  clean          Delete all screenshots from .ui-val/screenshots/
 
-Options:
+Options (check):
   --viewports=desktop,tablet,mobile   Viewports to check (default: all three)
   --wait=3000                         Wait ms after page load (default: 3000)
   --pages=/,/about                    Pages to check (default: /)
@@ -19,7 +20,8 @@ Options:
 Examples:
   ui-val check http://localhost:5173
   ui-val check http://localhost:5173 --viewports=mobile
-  ui-val check http://localhost:5173 --pages=/,/about`);
+  ui-val check http://localhost:5173 --pages=/,/about
+  ui-val clean`);
 }
 
 async function main() {
@@ -27,6 +29,12 @@ async function main() {
 
   if (!command || command === '--help' || command === '-h') {
     printUsage();
+    process.exit(0);
+  }
+
+  if (command === 'clean') {
+    const result = await cleanupScreenshots();
+    console.log(JSON.stringify(result));
     process.exit(0);
   }
 

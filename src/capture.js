@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 import { VIEWPORTS, DEFAULTS } from './config.js';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, unlink, readdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 
 /**
@@ -96,4 +96,20 @@ export async function captureUrl(url, options = {}) {
   }
 
   return results;
+}
+
+/**
+ * Clean up screenshot files after evaluation is complete.
+ * @param {string} screenshotDir - Directory to clean (default: DEFAULTS.screenshotDir)
+ */
+export async function cleanupScreenshots(screenshotDir = DEFAULTS.screenshotDir) {
+  try {
+    const files = await readdir(screenshotDir);
+    const pngs = files.filter((f) => f.endsWith('.png'));
+    await Promise.all(pngs.map((f) => unlink(join(screenshotDir, f))));
+    return { deleted: pngs.length, files: pngs };
+  } catch (err) {
+    if (err.code === 'ENOENT') return { deleted: 0, files: [] };
+    throw err;
+  }
 }

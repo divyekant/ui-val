@@ -1,5 +1,7 @@
-import { captureUrl } from './capture.js';
+import { captureUrl, cleanupScreenshots } from './capture.js';
 import { VIEWPORTS } from './config.js';
+
+export { cleanupScreenshots };
 
 /**
  * Capture screenshots and metadata. No API calls — the agent evaluates visually.

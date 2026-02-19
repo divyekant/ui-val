@@ -52,6 +52,16 @@ For each viewport screenshot, evaluate against this **12-point rubric**:
 11. **Overlapping content** — nothing incorrectly overlapping
 12. **Horizontal overflow** — no sideways scroll, no cut-off content
 
+## Step 2.5: Clean Up Screenshots
+
+After reading and evaluating all screenshots, **always clean up** to free disk space:
+
+```bash
+node ~/.claude/skills/ui-val/bin/ui-val.js clean
+```
+
+This deletes all `.png` files from `.ui-val/screenshots/`. Do this after every evaluation pass — the screenshots have served their purpose once you've read them. If you need to re-capture (for fix verification), the next `check` run will create fresh ones, and you clean up again after evaluating those.
+
 ## Step 3: Report and Fix
 
 ### Score >= 8: PASS
@@ -80,7 +90,7 @@ Report to user: "UI validation passed. No critical issues found."
 1. **Never auto-fix more than 3 times** — avoid infinite loops
 2. **Don't fix subjective/info-level issues automatically** — mention them to the user
 3. **If the dev server isn't running**, tell the user to start it first
-4. **Screenshots are saved** to `.ui-val/screenshots/` — add to `.gitignore`
+4. **Always clean up screenshots** after evaluation — run `ui-val clean` once done. Add `.ui-val/screenshots/` to `.gitignore` as a safety net
 
 ## Quick Check (for auto-invocation)
 
