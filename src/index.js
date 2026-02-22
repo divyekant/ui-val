@@ -22,9 +22,12 @@ export async function capture(url, options = {}) {
     }
   }
 
-  // Preflight: check URL is reachable
+  // Preflight: check URL is reachable (HEAD first, fall back to GET)
   try {
-    const res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(10000) });
+    let res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(10000) });
+    if (res.status === 405 || res.status === 501) {
+      res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(10000) });
+    }
     if (!res.ok && res.status !== 304) {
       throw new Error(`HTTP ${res.status}`);
     }
